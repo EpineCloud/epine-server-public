@@ -1,0 +1,26 @@
+openapi: "3.0.0"
+info:
+  version: 0.0.1
+  title: 'EPine'
+tags:
+  - name: Auth
+paths:
+  '/v1/auth/request':
+    post:
+      summary: 'Auth request'
+      operationId: 'authRequest'
+      description: 'Request URI for authorization. User must be subscribed via websockets, sessionId is required'
+      tags:
+        - Auth
+      responses:
+        '200':
+          description: 'URI'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  uri:
+                    type: string
+        '400':
+          description: 'Bad request'
