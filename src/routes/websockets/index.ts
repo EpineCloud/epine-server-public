@@ -1,13 +1,12 @@
 import { Namespace, Socket } from 'socket.io'
 import { CHANNELS } from './constants'
 import { io } from '../../server'
+import { ClientToServerEvents, InterServerEvents, ServerToClientEvents, SocketData } from './types'
 
-export const addHandlers = (io: Namespace) => {
+export const addHandlers = (io: Namespace<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>) => {
   io.on('connect', (socket) => {
-    console.debug(`Socket id connected: ${socket.id}`)
-    socket.on('subscribe', () => {
-      socket.data.sessionId = crypto.randomUUID()
-    })
+    socket.data.sessionId = crypto.randomUUID()
+    console.debug(`Socket id connected: id: ${socket.id}, sessionId: ${socket.data.sessionId}`)
   })
 }
 
