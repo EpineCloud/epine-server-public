@@ -3,5 +3,7 @@ export const VERSIONS = {
 }
 
 export enum CHANNELS {
+  SUBSCRIBE = 'subscribe',
+  SESSION = 'session',
   AUTH_CONNECTED = 'auth:connected',
 }

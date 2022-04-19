@@ -6,10 +6,17 @@ tags:
   - name: Auth
 paths:
   '/v1/auth/request':
-    post:
+    get:
       summary: 'Auth request'
       operationId: 'authRequest'
-      description: 'Request URI for authorization. User must be subscribed via websockets, sessionId is required'
+      description: 'Request URI for authorization'
+      parameters:
+      - in: header
+        name: x-session-id
+        schema:
+          type: string
+        required: true
+        description: 'SessionId is retured after user subscribes via websockets'
       tags:
         - Auth
       responses:
