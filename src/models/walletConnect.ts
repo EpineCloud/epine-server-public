@@ -1,9 +1,12 @@
 import NodeWalletConnect from '@walletconnect/node'
 import { emitAuth } from '../routes/websockets'
 
-class WalletConnect {
-  async getURI(sessionId: string): Promise<string> {
-    const walletConnector = new NodeWalletConnect(
+const walletConnectInstances = new Map<string, NodeWalletConnect>()
+
+const getWalletConnectInstance = (sessionId: string) => {
+  const existingWCI = walletConnectInstances.get(sessionId)
+  if (!existingWCI) {
+    const wci = new NodeWalletConnect(
       {
         bridge: 'https://bridge.walletconnect.org',
       },
@@ -16,6 +19,17 @@ class WalletConnect {
         },
       }
     )
+    walletConnectInstances.set(sessionId, wci)
+
+    return wci
+  }
+
+  return existingWCI
+}
+
+class WalletConnect {
+  async getURI(sessionId: string): Promise<string> {
+    const walletConnector = getWalletConnectInstance(sessionId)
 
     if (!walletConnector.connected) {
       await walletConnector.createSession({ chainId: 1 })
@@ -41,6 +55,7 @@ class WalletConnect {
       }
 
       console.info({ payload, sessionId }, 'Wallet connect disconnect')
+      walletConnectInstances.delete(sessionId)
       walletConnector.killSession().catch(error => console.error({ error }, 'Wallet connect error during session kill'))
     })
 
