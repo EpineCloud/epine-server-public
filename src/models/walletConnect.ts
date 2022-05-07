@@ -37,8 +37,8 @@ class WalletConnectService {
       }
 
       console.debug({ payload: JSON.stringify(payload) }, 'Wallet connect connect event')
-      if (payload.params.accounts.length > 1) {
-        console.warn(payload.params.accounts.join(' '), 'More than one public key returned on wallet connect event')
+      if (payload.params[0].accounts.length > 1) {
+        console.warn(payload.params[0].accounts.join(' '), 'More than one public key returned on wallet connect event')
       }
       emitAuth(sessionId, payload.params.accounts)
     })
