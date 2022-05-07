@@ -10,7 +10,7 @@ export const addHandlers = (io: Namespace<ClientToServerEvents, ServerToClientEv
   io.on('connect', (socket) => {
     console.debug(`Socket: ${socket.id}, connected`)
 
-    socket.on(EVENTS.SUBSCRIBE, (sessionId) => {
+    socket.on(EVENTS.SUBSCRIBE, ({ sessionId }) => {
       if (sessionId && sessionSocketMap[sessionId]) {
         sessionSocketMap[sessionId] = socket.id
         console.debug(`SessionId: ${sessionId} provided, socketId: ${socket.id}`)
@@ -23,7 +23,7 @@ export const addHandlers = (io: Namespace<ClientToServerEvents, ServerToClientEv
 
       console.debug(`Socket: ${socket.id}, subscribed with sessionId: ${newSessionId}`)
 
-      socket.emit(EVENTS.SESSION, newSessionId)
+      socket.emit(EVENTS.SESSION, { sessionId: newSessionId })
     })
   })
 }

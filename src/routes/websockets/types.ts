@@ -2,11 +2,11 @@ import { CHANNELS } from './constants'
 
 export interface ServerToClientEvents {
   [CHANNELS.AUTH_CONNECTED]: (payload: { publicKeys: string[] }) => void
-  [CHANNELS.SESSION]: (sessionId: string) => void
+  [CHANNELS.SESSION]: (payload: { sessionId: string }) => void
 }
 
 export interface ClientToServerEvents {
-  [CHANNELS.SUBSCRIBE]: (sessionId?: string) => void
+  [CHANNELS.SUBSCRIBE]: (payload: { sessionId?: string }) => void
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
