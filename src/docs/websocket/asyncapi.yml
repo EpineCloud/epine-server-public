@@ -1,0 +1,37 @@
+asyncapi: 2.4.0
+info:
+  title: EPine
+  version: 0.0.1
+  description: Service for gaming dApps
+channels:
+  connect:
+    publish:
+      description: 'First event that is sent on a server. Then handlers are linked to this particular socket'
+  subscribe:
+    publish:
+      description: 'Subscribe for events. Receive subscriptionId through `session` channel to work with API, some REST endpoints would require you to send sessionId. Optionally, you can send sessionId that you received before to re-establish connection'
+      message:
+        $ref: '#/components/messages/SubscribeRequest'
+  session:
+    subscribe:
+      description: 'Channel retrieves sessionId after `subscribe` event'
+      message:
+        $ref: '#/components/messages/SessionResponse'
+  auth:connected:
+    subscribe:
+      description: 'Emitted on successful wallet connection'
+components:
+  messages:
+    SessionResponse:
+      payload:
+        type: object
+        required: [subscriptionId]
+        properties:
+          subscriptionId:
+              type: string
+    SubscribeRequest:
+      payload:
+        type: object
+        properties:
+          subscriptionId:
+              type: string

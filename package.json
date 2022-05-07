@@ -2,18 +2,20 @@
   "name": "epine",
   "version": "1.0.0",
   "description": "epine server",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
   "author": "Zhanybek Sadvakassov",
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "tsc",
-    "start": "ts-node ./src/index.ts",
+    "build:docs": "js-yaml ./docs/rest/openapi.yml > ./docs/rest/openapi.json && js-yaml ./docs/websocket/asyncapi.yml > ./docs/websocket/asyncapi.json",
+    "build": "npm run build:docs && tsc",
+    "start": "node ./dist",
     "lint": "eslint '**/*.ts' -f codeframe"
   },
   "dependencies": {
     "@walletconnect/node": "^1.0.0",
     "@walletconnect/qrcode-modal": "^1.7.7",
+    "ajv": "8.11.0",
     "express": "^4.17.3",
     "socket.io": "^4.4.1"
   },
@@ -26,6 +28,7 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^5.2.0",
     "eslint-plugin-sonarjs": "^0.13.0",
+    "js-yaml": "^3.14.1",
     "socket.io-client": "^4.4.1",
     "typescript": "^4.6.3"
   }

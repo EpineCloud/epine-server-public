@@ -54,3 +54,7 @@ src/generated/**/*
 
 # VSCode
 .vscode
+
+# Generated JSON docs
+src/docs/rest/openapi.json
+src/docs/websocket/asyncapi.json
