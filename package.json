@@ -7,13 +7,13 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build:docs": "js-yaml ./docs/rest/openapi.yml > ./docs/rest/openapi.json && js-yaml ./docs/websocket/asyncapi.yml > ./docs/websocket/asyncapi.json",
+    "build:docs": "js-yaml ./src/docs/rest/openapi.yml > ./src/docs/rest/openapi.json && js-yaml ./src/docs/websocket/asyncapi.yml > ./src/docs/websocket/asyncapi.json",
     "build": "npm run build:docs && tsc",
     "start": "node ./dist",
     "lint": "eslint '**/*.ts' -f codeframe"
   },
   "dependencies": {
-    "@walletconnect/node": "^1.0.0",
+    "@walletconnect/client": "^1.7.8",
     "@walletconnect/qrcode-modal": "^1.7.7",
     "ajv": "8.11.0",
     "express": "^4.17.3",

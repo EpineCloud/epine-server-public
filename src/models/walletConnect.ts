@@ -1,24 +1,20 @@
-import NodeWalletConnect from '@walletconnect/node'
+import WalletConnect from '@walletconnect/client'
 import { emitAuth } from '../routes/websockets'
 
-const walletConnectInstances = new Map<string, NodeWalletConnect>()
+const walletConnectInstances = new Map<string, WalletConnect>()
 
 const getWalletConnectInstance = (sessionId: string) => {
   const existingWCI = walletConnectInstances.get(sessionId)
   if (!existingWCI) {
-    const wci = new NodeWalletConnect(
-      {
-        bridge: 'https://bridge.walletconnect.org',
+    const wci = new WalletConnect({
+      bridge: 'https://bridge.walletconnect.org',
+      clientMeta: {
+        description: 'epine',
+        url: 'https://walletconnect.org',
+        icons: ['https://cdn.pixabay.com/photo/2012/04/13/11/15/forest-31910_1280.png'],
+        name: 'epine',
       },
-      {
-        clientMeta: {
-          description: 'epine',
-          url: 'https://nodejs.org/en/',
-          icons: ['https://cdn.pixabay.com/photo/2012/04/13/11/15/forest-31910_1280.png'],
-          name: 'epine',
-        },
-      }
-    )
+    })
     walletConnectInstances.set(sessionId, wci)
 
     return wci
@@ -27,7 +23,7 @@ const getWalletConnectInstance = (sessionId: string) => {
   return existingWCI
 }
 
-class WalletConnect {
+class WalletConnectService {
   async getURI(sessionId: string): Promise<string> {
     const walletConnector = getWalletConnectInstance(sessionId)
 
@@ -65,4 +61,4 @@ class WalletConnect {
   }
 }
 
-export const walletConnect = new WalletConnect()
+export const walletConnect = new WalletConnectService()
