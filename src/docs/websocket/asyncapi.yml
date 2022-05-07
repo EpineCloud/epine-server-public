@@ -20,6 +20,8 @@ channels:
   auth:connected:
     subscribe:
       description: 'Emitted on successful wallet connection'
+      message:
+        $ref: '#/components/messages/AuthConnectedResponse'
 components:
   messages:
     SessionResponse:
@@ -34,4 +36,12 @@ components:
         type: object
         properties:
           subscriptionId:
+              type: string
+    AuthConnectedResponse:
+      payload:
+        type: object
+        properties:
+          publicKeys:
+            type: array
+            items:
               type: string

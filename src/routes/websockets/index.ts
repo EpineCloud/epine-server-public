@@ -28,8 +28,8 @@ export const addHandlers = (io: Namespace<ClientToServerEvents, ServerToClientEv
   })
 }
 
-export const emitAuth = (sessionId: string) => {
+export const emitAuth = (sessionId: string, publicKeys: string[]) => {
   const socketId = sessionSocketMap[sessionId]
   console.debug(`Emitting auth for socketId: ${socketId}, sessionId: ${sessionId}`)
-  io.to(socketId).emit(EVENTS.AUTH_CONNECTED)
+  io.to(socketId).emit(EVENTS.AUTH_CONNECTED, { publicKeys })
 }

@@ -31,8 +31,16 @@ class WalletConnectService {
       await walletConnector.createSession({ chainId: 1 })
     }
 
-    walletConnector.on('connect', () => {
-      emitAuth(sessionId)
+    walletConnector.on('connect', (error, payload) => {
+      if (error) {
+        console.error({ error, sessionId }, 'Wallet connect connect error')
+      }
+
+      console.debug({ payload: JSON.stringify(payload) }, 'Wallet connect connect event')
+      if (payload.params.accounts.length > 1) {
+        console.warn(payload.params.accounts.join(' '), 'More than one public key returned on wallet connect event')
+      }
+      emitAuth(sessionId, payload.params.accounts)
     })
 
     walletConnector.on('session_update', (error, payload) => {
