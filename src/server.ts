@@ -1,14 +1,14 @@
 import express from 'express'
 import { createServer } from 'http'
 import { Server } from 'socket.io'
-import { route as authRouter } from './routes/auth'
+import { bindLogger } from './logging'
 import { addHandlers } from './routes/websockets'
 import { VERSIONS } from './routes/websockets/constants'
 import { ClientToServerEvents, InterServerEvents, ServerToClientEvents, SocketData } from './routes/websockets/types'
 
 const app = express()
 
-authRouter(app)
+bindLogger(app)
 
 export const server = createServer(app)
 
