@@ -9,12 +9,13 @@ module.exports = {
     'plugin:sonarjs/recommended',
   ],
   parserOptions: {
-    project: './tsconfig.json',
+    project: ['./tsconfig.json'],
   },
-  ignorePatterns: [],
   rules: {
     // code formatting
     '@typescript-eslint/indent': 0,
+    'no-multiple-empty-lines': [2, { max: 2 }],
+    'eol-last': [2],
     'comma-dangle': [
       2,
       {
@@ -68,7 +69,7 @@ module.exports = {
     '@typescript-eslint/no-use-before-define': 1,
     'sonarjs/no-identical-functions': 1,
   },
-  ignorePatterns: ['dist', 'src/openapi', 'docs', 'src/generated'],
+  ignorePatterns: ['dist', 'src/docs'],
   parserOptions: {
     project: '.eslint.tsconfig.json',
   },
