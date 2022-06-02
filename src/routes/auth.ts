@@ -14,6 +14,6 @@ router.get('/auth/request', async (req, res, next) => {
   res.status(200).send({ uri })
 })
 
-export const route = (app: Application, prefix = '/v1') => {
+export const bindRoutes = (app: Application, prefix: string) => {
   app.use(prefix, router)
 }
