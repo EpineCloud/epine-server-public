@@ -1,7 +1,11 @@
 import { Application } from 'express'
 import pino from 'pino'
-import logger from 'pino-http'
+import pinoHttp from 'pino-http'
+
+export const logger = pino({ level: 'debug' })
+
+export const walletConnectLogger = logger.child({ service: 'wallet-connector' })
 
 export const bindLogger = (app: Application) => {
-  app.use(logger({ logger: pino() as any }))
+  app.use(pinoHttp({ logger: logger as any }))
 }

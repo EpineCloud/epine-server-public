@@ -2,6 +2,7 @@ import { CHANNELS } from './constants'
 
 export interface ServerToClientEvents {
   [CHANNELS.AUTH_CONNECTED]: (payload: { publicKeys: string[] }) => void
+  [CHANNELS.AUTH_VERIFIED]: (payload: { publicKey: string }) => void
   [CHANNELS.SESSION]: (payload: { sessionId: string }) => void
 }
 

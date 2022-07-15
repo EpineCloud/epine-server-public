@@ -10,7 +10,7 @@ export const addHandlers = (io: Namespace<ClientToServerEvents, ServerToClientEv
   io.on('connect', (socket) => {
     console.debug(`Socket: ${socket.id}, connected`)
 
-    socket.on(EVENTS.SUBSCRIBE, ({ sessionId }) => {
+    socket.on(EVENTS.SUBSCRIBE, ({ sessionId } = {}) => {
       if (sessionId && sessionSocketMap[sessionId]) {
         sessionSocketMap[sessionId] = socket.id
         console.debug(`SessionId: ${sessionId} provided, socketId: ${socket.id}`)
@@ -32,4 +32,10 @@ export const emitAuth = (sessionId: string, publicKeys: string[]) => {
   const socketId = sessionSocketMap[sessionId]
   console.debug(`Emitting auth for socketId: ${socketId}, sessionId: ${sessionId}`)
   io.to(socketId).emit(EVENTS.AUTH_CONNECTED, { publicKeys })
+}
+
+export const emitAuthVerified = (sessionId: string, publicKey: string) => {
+  const socketId = sessionSocketMap[sessionId]
+  console.debug(`Emitting auth verified for socketId: ${socketId}, sessionId: ${sessionId}`)
+  io.to(socketId).emit(EVENTS.AUTH_VERIFIED, { publicKey })
 }

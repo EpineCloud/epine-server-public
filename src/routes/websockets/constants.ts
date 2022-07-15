@@ -6,4 +6,5 @@ export enum CHANNELS {
   SUBSCRIBE = 'subscribe',
   SESSION = 'session',
   AUTH_CONNECTED = 'auth:connected',
+  AUTH_VERIFIED = 'auth:verified',
 }

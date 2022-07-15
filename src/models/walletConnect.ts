@@ -1,5 +1,6 @@
 import WalletConnect from '@walletconnect/client'
-import { emitAuth } from '../routes/websockets'
+import { walletConnectLogger } from '../logging'
+import { emitAuth, emitAuthVerified } from '../routes/websockets'
 
 const walletConnectInstances = new Map<string, WalletConnect>()
 
@@ -23,6 +24,49 @@ const getWalletConnectInstance = (sessionId: string) => {
   return existingWCI
 }
 
+const getAuthTypeData = ({
+  username,
+  userAccount,
+  projectName,
+  chainId,
+}: { username: string, userAccount: string, projectName: string, chainId: number }) => {
+  return JSON.stringify({
+    types: {
+      EIP712Domain: [
+        { name: 'name', type: 'string' },
+        { name: 'version', type: 'string' },
+        { name: 'chainId', type: 'uint256' },
+      ],
+      Person: [
+        { name: 'name', type: 'string' },
+        { name: 'account', type: 'address' },
+      ],
+      Mail: [
+        { name: 'from', type: 'Person' },
+        { name: 'to', type: 'Person' },
+        { name: 'contents', type: 'string' },
+      ],
+    },
+    primaryType: 'Mail',
+    domain: {
+      name: projectName,
+      version: '1.0',
+      chainId,
+    },
+    message: {
+      from: {
+        name: username,
+        account: userAccount,
+      },
+      to: {
+        name: username,
+        account: userAccount,
+      },
+      contents: `Authorizing ${projectName} user`,
+    },
+  })
+}
+
 class WalletConnectService {
   async getURI(sessionId: string): Promise<string> {
     const walletConnector = getWalletConnectInstance(sessionId)
@@ -33,39 +77,61 @@ class WalletConnectService {
 
     walletConnector.on('connect', (error, payload) => {
       if (error) {
-        console.error({ error, sessionId }, 'Wallet connect connect error')
+        walletConnectLogger.error({ error, sessionId }, 'Wallet connect connect error')
       }
 
-      console.debug({ payload: JSON.stringify(payload) }, 'Wallet connect connect event')
+      walletConnectLogger.debug({ payload: JSON.stringify(payload) }, 'Wallet connect connect event')
       if (payload.params[0].accounts.length > 1) {
-        console.warn(payload.params[0].accounts.join(' '), 'More than one public key returned on wallet connect event')
+        walletConnectLogger.warn(payload.params[0].accounts.join(' '), 'More than one public key returned on wallet connect event')
       }
       emitAuth(sessionId, payload.params.accounts)
     })
 
     walletConnector.on('session_update', (error, payload) => {
       if (error) {
-        console.error({ error, sessionId }, 'Wallet connect session update error')
+        walletConnectLogger.error({ error, sessionId }, 'Wallet connect session update error')
         return
       }
 
-      console.info({ payload, sessionId }, 'Wallet connect session update')
+      walletConnectLogger.info({ payload, sessionId }, 'Wallet connect session update')
     })
 
     walletConnector.on('disconnect', (error, payload) => {
       if (error) {
-        console.info({ error }, 'Wallet connect disconnect error')
+        walletConnectLogger.info({ error }, 'Wallet connect disconnect error')
         return
       }
 
-      console.info({ payload, sessionId }, 'Wallet connect disconnect')
+      walletConnectLogger.info({ payload, sessionId }, 'Wallet connect disconnect')
       walletConnectInstances.delete(sessionId)
-      walletConnector.killSession().catch(error => console.error({ error }, 'Wallet connect error during session kill'))
+      walletConnector.killSession().catch(error => walletConnectLogger.error({ error }, 'Wallet connect error during session kill'))
     })
 
-    console.debug({ uri: walletConnector.uri }, 'URI for connecting wallet')
+    walletConnectLogger.debug({ uri: walletConnector.uri }, 'URI for connecting wallet')
 
     return walletConnector.uri
+  }
+
+  async authVerify(sessionId: string) {
+    try {
+      const walletConnect = await getWalletConnectInstance(sessionId)
+      walletConnectLogger.debug(`Verifying wallet for ${sessionId}, address: ${walletConnect.accounts[0]}`)
+      const response = await walletConnect.signTypedData([
+        walletConnect.accounts[0],
+        getAuthTypeData({
+          username: 'Test',
+          userAccount: walletConnect.accounts[0],
+          projectName: 'Test',
+          chainId: 1,
+        }),
+      ])
+      walletConnectLogger.debug({ response, sessionId })
+
+      emitAuthVerified(sessionId, walletConnect.accounts[0])
+    } catch (error) {
+      walletConnectLogger.error(error, 'Failed to authorize')
+      throw error
+    }
   }
 }
 
