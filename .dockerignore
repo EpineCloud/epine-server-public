@@ -15,3 +15,4 @@ docs
 docs-output
 helm
 node_modules
+tsconfig.tsbuildinfo
