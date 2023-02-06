@@ -16,7 +16,33 @@ paths:
         schema:
           type: string
         required: true
-        description: 'SessionId is retured after user subscribes via websockets'
+        description: 'SessionId is returned after user subscribes via websockets'
+      tags:
+        - Auth
+      responses:
+        '200':
+          description: 'URI'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  uri:
+                    type: string
+        '400':
+          description: 'Bad request'
+  '/v1/ton/auth/request':
+    get:
+      summary: 'TON Auth request'
+      operationId: 'tonAuthRequest'
+      description: 'Request URL for authorization'
+      parameters:
+      - in: header
+        name: x-session-id
+        schema:
+          type: string
+        required: true
+        description: 'SessionId is returned after user subscribes via websockets'
       tags:
         - Auth
       responses:
