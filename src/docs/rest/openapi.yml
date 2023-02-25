@@ -1,7 +1,7 @@
 openapi: "3.0.0"
 info:
   version: 0.0.1
-  title: 'EPine'
+  title: 'Epine'
 tags:
   - name: Auth
 paths:
@@ -17,32 +17,16 @@ paths:
           type: string
         required: true
         description: 'SessionId is returned after user subscribes via websockets'
-      tags:
-        - Auth
-      responses:
-        '200':
-          description: 'URI'
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  uri:
-                    type: string
-        '400':
-          description: 'Bad request'
-  '/v1/ton/auth/request':
-    get:
-      summary: 'TON Auth request'
-      operationId: 'tonAuthRequest'
-      description: 'Request URL for authorization'
-      parameters:
-      - in: header
-        name: x-session-id
+      - in: query
+        name: chainType
         schema:
           type: string
-        required: true
-        description: 'SessionId is returned after user subscribes via websockets'
+          enum:
+            - EVM
+            - TVM
+          default: EVM
+        required: false
+        description: 'Allows to select type of blockchain'
       tags:
         - Auth
       responses:
