@@ -41,7 +41,7 @@ components:
       payload:
         type: object
         properties:
-          publicKeys:
+          addresses:
             type: array
             items:
               type: string

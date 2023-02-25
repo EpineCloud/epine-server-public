@@ -28,14 +28,14 @@ export const addHandlers = (io: Namespace<ClientToServerEvents, ServerToClientEv
   })
 }
 
-export const emitAuth = (sessionId: string, publicKeys: string[]) => {
+export const emitAuth = (sessionId: string, addresses: string[]) => {
   const socketId = sessionSocketMap[sessionId]
   console.debug(`Emitting auth for socketId: ${socketId}, sessionId: ${sessionId}`)
-  io.to(socketId).emit(EVENTS.AUTH_CONNECTED, { publicKeys })
+  io.to(socketId).emit(EVENTS.AUTH_CONNECTED, { addresses })
 }
 
-export const emitAuthVerified = (sessionId: string, publicKey: string) => {
+export const emitAuthVerified = (sessionId: string, address: string) => {
   const socketId = sessionSocketMap[sessionId]
   console.debug(`Emitting auth verified for socketId: ${socketId}, sessionId: ${sessionId}`)
-  io.to(socketId).emit(EVENTS.AUTH_VERIFIED, { publicKey })
+  io.to(socketId).emit(EVENTS.AUTH_VERIFIED, { address })
 }
