@@ -1,31 +1,36 @@
-import { TonhubConnector, TonhubCreatedSession, TonhubWalletConfig } from 'ton-x'
+import TonConnect, { Wallet, toUserFriendlyAddress, WalletConnectionSourceHTTP } from '@tonconnect/sdk'
 import { tonConnectLogger } from '../../logging'
-import { emitAuth, emitAuthVerified } from '../../routes/websockets'
+import { emitAuth } from '../../routes/websockets'
+
+interface IStorage {
+  setItem: (key: string, value: string) => Promise<void>;
+  getItem: (key: string) => Promise<string | null>;
+  removeItem: (key: string) => Promise<void>;
+}
+const localStorage: Record<string, string> = {}
+const getLocalStorage = (sessionId: string): IStorage => ({
+  setItem: async (key: string, value: string) => { localStorage[`${sessionId}:${key}`] = value },
+  getItem: async (key: string) => localStorage[`${sessionId}:${key}`] || null,
+  removeItem: async (key: string) => { delete localStorage[`${sessionId}:${key}`] },
+})
 
 interface ConnectorData {
-  connector: TonhubConnector,
-  tonSession: TonhubCreatedSession,
-  ready: boolean,
-  wallet?: TonhubWalletConfig,
+  connector: TonConnect,
+  wallet?: Wallet,
 }
-
 const connectorInstances = new Map<string, ConnectorData>()
 
-const SESSION_WAITING_TIMEOUT = 5e3
-const SIGN_SIGNATURE_TIMEOUT = 5e6
-
-const getConnectorData = async (sessionId: string): Promise<ConnectorData> => {
+const getConnectorData = (sessionId: string): ConnectorData => {
   const existingConnector = connectorInstances.get(sessionId)
   if (!existingConnector) {
-    const connector = new TonhubConnector({ network: 'mainnet' })
-    const tonSession = await connector.createNewSession({
-      name: 'epine',
-      url: 'epine.com',
+    const connector = new TonConnect({
+      // TODO
+      manifestUrl: 'https://storage.googleapis.com/epine-trash/tonconnect-manifest.json',
+      storage: getLocalStorage(sessionId),
     })
+
     const conn = {
       connector,
-      tonSession,
-      ready: false,
     }
     connectorInstances.set(sessionId, conn)
 
@@ -39,45 +44,34 @@ const setConnectorInstance = (sessionId: string, data: ConnectorData) => {
   connectorInstances.set(sessionId, data)
 }
 
+const WALLET_CONNECTION_SOURCE: WalletConnectionSourceHTTP = {
+  universalLink: 'https://app.tonkeeper.com/ton-connect',
+  bridgeUrl: 'https://bridge.tonapi.io/bridge',
+}
+
 class TonWalletConnector {
   async getURI(sessionId: string): Promise<string> {
-    const tonConnector = await getConnectorData(sessionId)
+    const connectorData = getConnectorData(sessionId)
+    await connectorData.connector.restoreConnection()
 
-    tonConnector.connector.awaitSessionReady(tonConnector.tonSession.id, SESSION_WAITING_TIMEOUT)
-      .then(async awaitedSession => {
-        if (awaitedSession.state !== 'ready') {
-          throw new Error(`Incorrect state of awaited session: ${awaitedSession.state}`)
-        }
+    connectorData.connector.onStatusChange(wallet => {
+      if (!wallet) {
+        tonConnectLogger.error('No wallet')
+        return
+      }
 
-        setConnectorInstance(sessionId, {
-          ...await getConnectorData(sessionId),
-          wallet: awaitedSession.wallet,
-        })
-
-        emitAuth(sessionId, [awaitedSession.wallet.address])
+      // Set wallet
+      setConnectorInstance(sessionId, {
+        ...getConnectorData(sessionId),
+        wallet,
       })
-      .catch(err => tonConnectLogger.error(err))
 
-    return tonConnector.tonSession.link
-  }
-
-  async authVerify(sessionId: string) {
-    const connectorData = await getConnectorData(sessionId)
-    if (!connectorData.wallet) {
-      throw new Error('Wallet session was not initialized')
-    }
-    tonConnectLogger.debug(`Verifying wallet for ${sessionId}, address: ${connectorData.wallet?.address}`)
-
-    const signResponse = await connectorData.connector.requestSign({
-      seed: connectorData.tonSession.seed,
-      appPublicKey: connectorData.wallet.appPublicKey,
-      timeout: SIGN_SIGNATURE_TIMEOUT,
-      text: 'Hi! Sign it 😉',
+      const address = toUserFriendlyAddress(wallet.account.address)
+      emitAuth(sessionId, [address])
     })
-    if (signResponse.type !== 'success') {
-      throw new Error(`Signing failed, signResponse: ${JSON.stringify(signResponse)}`)
-    }
-    emitAuthVerified(sessionId, connectorData.wallet.address)
+
+    // TODO: Do we need to use something else for other wallets?
+    return connectorData.connector.connect(WALLET_CONNECTION_SOURCE)
   }
 }
 
