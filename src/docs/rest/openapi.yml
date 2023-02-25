@@ -1,7 +1,7 @@
 openapi: "3.0.0"
 info:
   version: 0.0.1
-  title: 'EPine'
+  title: 'Epine'
 tags:
   - name: Auth
 paths:
@@ -16,7 +16,17 @@ paths:
         schema:
           type: string
         required: true
-        description: 'SessionId is retured after user subscribes via websockets'
+        description: 'SessionId is returned after user subscribes via websockets'
+      - in: query
+        name: chainType
+        schema:
+          type: string
+          enum:
+            - EVM
+            - TVM
+          default: EVM
+        required: false
+        description: 'Allows to select type of blockchain'
       tags:
         - Auth
       responses:

@@ -1,28 +1,8 @@
 import WalletConnect from '@walletconnect/client'
-import { walletConnectLogger } from '../logging'
-import { emitAuth, emitAuthVerified } from '../routes/websockets'
+import { walletConnectLogger } from '../../logging'
+import { emitAuth, emitAuthVerified } from '../../routes/websockets'
 
 const walletConnectInstances = new Map<string, WalletConnect>()
-
-const getWalletConnectInstance = (sessionId: string) => {
-  const existingWCI = walletConnectInstances.get(sessionId)
-  if (!existingWCI) {
-    const wci = new WalletConnect({
-      bridge: 'https://bridge.walletconnect.org',
-      clientMeta: {
-        description: 'epine',
-        url: 'https://walletconnect.org',
-        icons: ['https://cdn.pixabay.com/photo/2012/04/13/11/15/forest-31910_1280.png'],
-        name: 'epine',
-      },
-    })
-    walletConnectInstances.set(sessionId, wci)
-
-    return wci
-  }
-
-  return existingWCI
-}
 
 const getAuthTypeData = ({
   username,
@@ -65,6 +45,26 @@ const getAuthTypeData = ({
       contents: `Authorizing ${projectName} user`,
     },
   })
+}
+
+const getWalletConnectInstance = (sessionId: string) => {
+  const existingWCI = walletConnectInstances.get(sessionId)
+  if (!existingWCI) {
+    const wci = new WalletConnect({
+      bridge: 'https://bridge.walletconnect.org',
+      clientMeta: {
+        description: 'epine',
+        url: 'https://walletconnect.org',
+        icons: ['https://cdn.pixabay.com/photo/2012/04/13/11/15/forest-31910_1280.png'],
+        name: 'epine',
+      },
+    })
+    walletConnectInstances.set(sessionId, wci)
+
+    return wci
+  }
+
+  return existingWCI
 }
 
 class WalletConnectService {

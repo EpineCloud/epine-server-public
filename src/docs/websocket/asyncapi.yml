@@ -6,10 +6,10 @@ info:
 channels:
   connect:
     publish:
-      description: 'First event that is sent on a server. Then handlers are linked to this particular socket'
+      description: 'First event that is sent on a server. Then handlers are linked to this particular socket connection'
   subscribe:
     publish:
-      description: 'Subscribe for events. Receive subscriptionId through `session` channel to work with API, some REST endpoints would require you to send sessionId. Optionally, you can send sessionId that you received before to re-establish connection'
+      description: 'Subscribe for events. Receive `subscriptionId` through `session` channel to work with API, some REST endpoints would require you to send `sessionId`. Optionally, you can send `sessionId` that you received before to re-establish connection'
       message:
         $ref: '#/components/messages/SubscribeRequest'
   session:

@@ -50,6 +50,8 @@ module.exports = {
     ],
     '@typescript-eslint/no-floating-promises': [2, { ignoreVoid: true }],
     'no-void': [2, { allowAsStatement: true }],
+    '@typescript-eslint/no-misused-promises': 0,
+    '@typescript-eslint/no-dynamic-delete': 0,
 
     // Less strictness over ??
     '@typescript-eslint/prefer-nullish-coalescing': 1,
