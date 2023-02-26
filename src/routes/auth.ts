@@ -1,9 +1,8 @@
 import express, { Application } from 'express'
 
+import { ChainType } from '../models/chains/types'
 import { walletConnect } from '../models/walletConnectors/walletConnect'
 import { tonWalletConnector } from '../models/walletConnectors/tonRemoteConnect'
-
-import { ChainType } from './types'
 
 const router = express.Router({ mergeParams: true })
 
