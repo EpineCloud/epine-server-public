@@ -53,10 +53,10 @@ const getWalletConnectInstance = (sessionId: string) => {
     const wci = new WalletConnect({
       bridge: 'https://bridge.walletconnect.org',
       clientMeta: {
-        description: 'epine',
-        url: 'https://walletconnect.org',
-        icons: ['https://cdn.pixabay.com/photo/2012/04/13/11/15/forest-31910_1280.png'],
-        name: 'epine',
+        description: 'Homespace',
+        url: 'https://homespace.is',
+        icons: ['https://storage.googleapis.com/epine-trash/homespace-logo.png'],
+        name: 'Homespace',
       },
     })
     walletConnectInstances.set(sessionId, wci)

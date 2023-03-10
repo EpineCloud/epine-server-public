@@ -7,6 +7,11 @@ import { ChainId, ChainType } from '../models/chains/types'
 const router = express.Router({ mergeParams: true })
 
 router.get('/tokens/address/:address/balance', async (req, res, next) => {
+  const { 'x-session-id': sessionId } = req.headers
+  if (!sessionId || typeof sessionId !== 'string') {
+    return res.sendStatus(400)
+  }
+
   const { address } = req.params
   if (!address || typeof address !== 'string') {
     return res.sendStatus(400)
