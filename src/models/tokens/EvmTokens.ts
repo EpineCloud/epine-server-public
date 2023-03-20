@@ -1,8 +1,9 @@
 import { JsonRpcProvider, formatEther } from 'ethers'
+import { Cell } from 'ton-core'
 
 import { ChainId } from '../chains/types'
 
-import { BaseTokens, TokensConfig, TokenBalance } from './BaseTokens'
+import { BaseTokens, TokensConfig, TokenBalance, INFTData, INFTCollectionMetadata } from './BaseTokens'
 
 export class EvmTokens extends BaseTokens {
   private readonly _provider: JsonRpcProvider
@@ -39,5 +40,30 @@ export class EvmTokens extends BaseTokens {
         native: true,
       },
     ]
+  }
+
+  // TO BE REFACTORED
+  async getNFTItemData(address: string): Promise<INFTData> {
+    return {
+      collectionAddress: undefined,
+      ownerAddress: undefined,
+      contentBlock: undefined,
+      nftItemIndex: undefined,
+    }
+  }
+
+  // TO BE REFACTORED
+  async getNftMetadata(collectionAddress: string, nftItemIndex: number, contentBloc: Cell): Promise<{contentUri: string | undefined}> {
+    return {
+      contentUri: undefined,
+    }
+  }
+
+  // TO BE REFACTORED
+  async getNFTCollectionMetadata(address: string): Promise<INFTCollectionMetadata> {
+    return {
+      ownerAddress: undefined,
+      collectionContentUri: undefined,
+    }
   }
 }

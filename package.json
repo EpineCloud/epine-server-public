@@ -10,9 +10,11 @@
     "build:docs": "js-yaml ./src/docs/rest/openapi.yml > ./src/docs/rest/openapi.json && js-yaml ./src/docs/websocket/asyncapi.yml > ./src/docs/websocket/asyncapi.json",
     "build": "npm run build:docs && tsc",
     "start": "node ./dist",
-    "lint": "eslint '**/*.ts' -f codeframe"
+    "lint": "eslint '**/*.ts' -f codeframe",
+    "test": "jest"
   },
   "dependencies": {
+    "@tonconnect/protocol": "^2.2.5",
     "@tonconnect/sdk": "^2.0.7",
     "@walletconnect/client": "^1.7.8",
     "@walletconnect/qrcode-modal": "^1.7.7",
@@ -25,10 +27,13 @@
     "ton": "^13.3.0",
     "ton-core": "^0.47.1",
     "ton-crypto": "^3.2.0",
+    "tweetnacl": "^1.0.3",
+    "tweetnacl-util": "^0.15.1",
     "web3": "^1.7.3"
   },
   "devDependencies": {
     "@types/express": "^4.17.13",
+    "@types/jest": "^29.5.0",
     "@typescript-eslint/eslint-plugin": "5.27.0",
     "@typescript-eslint/parser": "5.27.0",
     "eslint": "^7.32.0",
@@ -37,8 +42,10 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^5.2.0",
     "eslint-plugin-sonarjs": "^0.13.0",
+    "jest": "^29.5.0",
     "js-yaml": "^3.14.1",
     "socket.io-client": "^4.4.1",
+    "ts-jest": "^29.0.5",
     "typescript": "^4.6.3"
   }
 }
